@@ -339,51 +339,31 @@ const Projects = ({ activeTheme }) => (
 );
 
 const Contact = ({ activeTheme }) => {
-  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', message: '' });
-  const [status, setStatus] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('Sending...');
-    setTimeout(() => { setStatus('Message sent successfully!'); setFormData({ firstName: '', lastName: '', email: '', message: '' }); }, 1500);
-  };
-
   return (
     <motion.section 
       variants={pageVariants} initial="initial" animate="animate" exit="exit"
       className="bg-black py-32 px-6 md:px-20 text-white min-h-screen"
     >
       <div className="max-w-6xl mx-auto w-full">
-        <motion.h2 variants={fadeInUp} className="text-5xl md:text-[100px] font-black tracking-tighter leading-none mb-12 opacity-90">SAY HELLO</motion.h2>
+        <h2 className="text-5xl md:text-[100px] font-black tracking-tighter leading-none mb-12 opacity-90">SAY HELLO</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-          <motion.div variants={fadeInUp}>
-            <p className="text-xl md:text-3xl font-medium mb-6">Let's build something great together.</p>
-            <p className="text-zinc-400 mb-2">Email me directly at:</p>
-            <motion.a whileHover={{ x: 10, filter: "brightness(1.5)" }} href={`mailto:${portfolioData.email}`} className="text-xl md:text-3xl font-bold underline break-all inline-block" style={{ color: activeTheme }}>
-              {portfolioData.email}
-            </motion.a>
-          </motion.div>
+          {/* ... (Your existing Left side contact info) */}
           
           <motion.form 
+            action="https://formspree.io/f/mkollkpo" // REPLACE THIS!
+            method="POST"
             variants={staggerContainer}
-            onSubmit={handleSubmit} 
-            className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl shadow-2xl transition-colors duration-700" style={{ backgroundColor: activeTheme }}
+            className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl shadow-2xl transition-colors duration-700" 
+            style={{ backgroundColor: activeTheme }}
           >
-            <div className="flex gap-5 flex-col sm:flex-row">
-              <motion.input variants={fadeInUp} type="text" name="firstName" value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} required placeholder="First Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
-              <motion.input variants={fadeInUp} type="text" name="lastName" value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} required placeholder="Last Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
-            </div>
-            <motion.input variants={fadeInUp} type="email" name="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required placeholder="Email Address" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
-            <motion.textarea variants={fadeInUp} name="message" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required placeholder="Your Message" rows="4" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md resize-none"></motion.textarea>
+            <input type="text" name="firstName" required placeholder="First Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
+            <input type="text" name="lastName" required placeholder="Last Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
+            <input type="email" name="email" required placeholder="Email Address" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
+            <textarea name="message" required placeholder="Your Message" rows="4" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md resize-none"></textarea>
             
-            <motion.button 
-              variants={fadeInUp}
-              whileHover={{ scale: 1.03, backgroundColor: "#222" }} whileTap={{ scale: 0.97 }}
-              type="submit" className="bg-black text-white py-4 px-8 rounded-full font-bold w-full sm:w-auto self-start mt-2"
-            >
+            <button type="submit" className="bg-black text-white py-4 px-8 rounded-full font-bold w-full sm:w-auto self-start mt-2">
               Send Message
-            </motion.button>
-            {status && <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-2 text-sm font-bold text-white">{status}</motion.p>}
+            </button>
           </motion.form>
         </div>
       </div>
@@ -392,102 +372,67 @@ const Contact = ({ activeTheme }) => {
 };
 
 const HireMe = ({ activeTheme }) => {
-  const [inquiry, setInquiry] = useState({ name: '', company: '', email: '', service: 'Full Stack App', budget: '', details: '' });
-  const [status, setStatus] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus('Submitting inquiry...');
-    const payload = {
-      firstName: inquiry.name,
-      lastName: inquiry.company ? `(${inquiry.company})` : '',
-      email: inquiry.email,
-      message: `SERVICE: ${inquiry.service}\nBUDGET: ${inquiry.budget}\n\nPROJECT DETAILS:\n${inquiry.details}`
-    };
-    try {
-      const response = await fetch('http://localhost:5000/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const result = await response.json();
-      if (result.success) {
-        setStatus('Inquiry received! I will get back to you within 24 hours.');
-        setInquiry({ name: '', company: '', email: '', service: 'Full Stack App', budget: '', details: '' });
-      } else {
-        setStatus('Failed to send inquiry.');
-      }
-    } catch (error) {
-      setStatus('An error occurred. Is your backend server running?');
-    }
-  };
-
   return (
     <motion.section 
       variants={pageVariants} initial="initial" animate="animate" exit="exit"
       className="bg-zinc-950 py-32 px-6 md:px-20 text-white min-h-screen border-t border-zinc-900"
     >
       <div className="max-w-4xl mx-auto w-full">
-        <motion.h2 variants={fadeInUp} style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Project Inquiry</motion.h2>
-        <motion.h3 variants={fadeInUp} className="text-3xl md:text-5xl font-bold mb-6">START A PROJECT</motion.h3>
-        <motion.p variants={fadeInUp} className="text-zinc-400 mb-12 text-lg">Please fill out the form below to help me understand your project requirements, scope, and timeline. I review all inquiries carefully and respond promptly.</motion.p>
+        <h2 style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Project Inquiry</h2>
+        <h3 className="text-3xl md:text-5xl font-bold mb-6">START A PROJECT</h3>
+        <p className="text-zinc-400 mb-12 text-lg">Please fill out the form below to help me understand your project requirements, scope, and timeline.</p>
         
-        <motion.form variants={staggerContainer} onSubmit={handleSubmit} className="flex flex-col gap-8 bg-black p-8 md:p-12 rounded-3xl border border-zinc-800 shadow-2xl">
+        {/* Replace the action URL with your specific Formspree ID */}
+        <form action="https://formspree.io/f/xqevvwgn" method="POST" className="flex flex-col gap-8 bg-black p-8 md:p-12 rounded-3xl border border-zinc-800 shadow-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div variants={fadeInUp}>
+            <div>
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Full Name *</label>
-              <input type="text" required value={inquiry.name} onChange={(e) => setInquiry({...inquiry, name: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
-            </motion.div>
-            <motion.div variants={fadeInUp}>
+              <input type="text" name="name" required className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
+            </div>
+            <div>
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Company / Organization</label>
-              <input type="text" value={inquiry.company} onChange={(e) => setInquiry({...inquiry, company: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
-            </motion.div>
-            <motion.div variants={fadeInUp} className="md:col-span-2">
+              <input type="text" name="company" className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
+            </div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Email Address *</label>
-              <input type="email" required value={inquiry.email} onChange={(e) => setInquiry({...inquiry, email: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
-            </motion.div>
+              <input type="email" name="email" required className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
+            </div>
           </div>
 
-          <motion.div variants={fadeInUp} className="w-full h-px bg-zinc-800 my-2" />
+          <div className="w-full h-px bg-zinc-800 my-2" />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div variants={fadeInUp}>
+            <div>
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Primary Service Needed</label>
-              <select value={inquiry.service} onChange={(e) => setInquiry({...inquiry, service: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
+              <select name="service" className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
                 <option>Full Stack Web Application</option>
                 <option>Frontend Architecture (React)</option>
                 <option>Backend API Development (Node/Express)</option>
-                <option>Database Design & Optimization</option>
-                <option>General Technical Consultation</option>
               </select>
-            </motion.div>
-            <motion.div variants={fadeInUp}>
+            </div>
+            <div>
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Estimated Budget (USD)</label>
-              <select value={inquiry.budget} onChange={(e) => setInquiry({...inquiry, budget: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
-                <option value="" disabled>Select a range</option>
+              <select name="budget" className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
                 <option>Less than $1,000</option>
                 <option>$1,000 - $3,000</option>
                 <option>$3,000 - $10,000</option>
                 <option>$10,000+</option>
               </select>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="md:col-span-2">
+            </div>
+            <div className="md:col-span-2">
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Project Overview & Goals *</label>
-              <textarea required rows="5" value={inquiry.details} onChange={(e) => setInquiry({...inquiry, details: e.target.value})} placeholder="Describe the problem you are trying to solve..." className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white resize-none transition-colors"></textarea>
-            </motion.div>
+              <textarea name="message" required rows="5" className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white resize-none transition-colors"></textarea>
+            </div>
           </div>
           
-          <motion.div variants={fadeInUp} className="flex flex-col items-end">
-            <motion.button 
-              whileHover={{ scale: 1.05, filter: "brightness(1.2)", boxShadow: `0 10px 25px -5px ${activeTheme}` }} whileTap={{ scale: 0.95 }}
-              type="submit" style={{ backgroundColor: activeTheme }}
-              className="text-white py-4 px-10 rounded-xl font-bold w-full md:w-auto mt-4 transition-all"
-            >
-              Submit Inquiry
-            </motion.button>
-            {status && <motion.p initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ color: activeTheme }} className="text-sm font-bold mt-3 text-right">{status}</motion.p>}
-          </motion.div>
-        </motion.form>
+          <button 
+            type="submit" 
+            style={{ backgroundColor: activeTheme }}
+            className="text-white py-4 px-10 rounded-xl font-bold w-full md:w-auto mt-4 transition-all"
+          >
+            Submit Inquiry
+          </button>
+        </form>
       </div>
     </motion.section>
   );
