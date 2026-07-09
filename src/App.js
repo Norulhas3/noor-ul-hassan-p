@@ -15,14 +15,6 @@ const portfolioData = {
       degree: "B.S. in Computer Science & Software Engineering",
       institution: "University of Central Punjab",
       year: "2024 - Present",
-      description: "Focused on object-oriented programming, data structures, algorithmic logic, and relational database systems."
-    }
-  ],
-  education: [
-    {
-      degree: "B.S. in Computer Science & Software Engineering",
-      institution: "University of Central Punjab",
-      year: "2024 - Present",
       description: "Focused on object-oriented programming, data structures, algorithmic logic, and relational database systems.",
       image: null
     },
@@ -53,7 +45,7 @@ const portfolioData = {
       name: "Portfolio",
       description: "A personal portfolio website showcasing my projects and skills.",
       tech: ["React", "Node.js", "Framer Motion", "Tailwind CSS"],
-      link: "https://noor-ul-hassan-portfolio.netlify.app/"
+      link: "https://nuh-portfolio.site"
     },
     {
       id: 2,
@@ -344,8 +336,25 @@ const Contact = ({ activeTheme }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('Sending...');
-    setTimeout(() => { setStatus('Message sent successfully!'); setFormData({ firstName: '', lastName: '', email: '', message: '' }); }, 1500);
+    setStatus('Sending message...');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setStatus('Message sent successfully!');
+        setFormData({ firstName: '', lastName: '', email: '', message: '' });
+      } else {
+        setStatus('Failed to send message.');
+      }
+    } catch (error) {
+      setStatus('An error occurred. Please try again later.');
+    }
   };
 
   return (
@@ -365,16 +374,17 @@ const Contact = ({ activeTheme }) => {
           </motion.div>
           
           <motion.form 
-            variants={staggerContainer}
             onSubmit={handleSubmit} 
-            className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl shadow-2xl transition-colors duration-700" style={{ backgroundColor: activeTheme }}
+            variants={staggerContainer}
+            className="flex flex-col gap-5 p-6 sm:p-8 rounded-3xl shadow-2xl transition-colors duration-700" 
+            style={{ backgroundColor: activeTheme }}
           >
             <div className="flex gap-5 flex-col sm:flex-row">
-              <motion.input variants={fadeInUp} type="text" name="firstName" value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} required placeholder="First Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
-              <motion.input variants={fadeInUp} type="text" name="lastName" value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} required placeholder="Last Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
+              <motion.input variants={fadeInUp} type="text" value={formData.firstName} onChange={(e) => setFormData({...formData, firstName: e.target.value})} required placeholder="First Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
+              <motion.input variants={fadeInUp} type="text" value={formData.lastName} onChange={(e) => setFormData({...formData, lastName: e.target.value})} required placeholder="Last Name" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
             </div>
-            <motion.input variants={fadeInUp} type="email" name="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required placeholder="Email Address" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
-            <motion.textarea variants={fadeInUp} name="message" value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required placeholder="Your Message" rows="4" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md resize-none"></motion.textarea>
+            <motion.input variants={fadeInUp} type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} required placeholder="Email Address" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md" />
+            <motion.textarea variants={fadeInUp} value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})} required placeholder="Your Message" rows="4" className="w-full bg-transparent border-b-2 border-white/40 p-3 placeholder-white/80 text-white focus:outline-none focus:border-white focus:bg-black/10 rounded-t-md resize-none"></motion.textarea>
             
             <motion.button 
               variants={fadeInUp}
@@ -392,33 +402,37 @@ const Contact = ({ activeTheme }) => {
 };
 
 const HireMe = ({ activeTheme }) => {
-  const [inquiry, setInquiry] = useState({ name: '', company: '', email: '', service: 'Full Stack App', budget: '', details: '' });
+  const [inquiry, setInquiry] = useState({ firstName: '', company: '', email: '', service: 'Full Stack Web Application', budget: '', details: '' });
   const [status, setStatus] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('Submitting inquiry...');
+
+    // Format the payload to match what the API expects
     const payload = {
-      firstName: inquiry.name,
+      firstName: inquiry.firstName,
       lastName: inquiry.company ? `(${inquiry.company})` : '',
       email: inquiry.email,
       message: `SERVICE: ${inquiry.service}\nBUDGET: ${inquiry.budget}\n\nPROJECT DETAILS:\n${inquiry.details}`
     };
+
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      
       const result = await response.json();
       if (result.success) {
         setStatus('Inquiry received! I will get back to you within 24 hours.');
-        setInquiry({ name: '', company: '', email: '', service: 'Full Stack App', budget: '', details: '' });
+        setInquiry({ firstName: '', company: '', email: '', service: 'Full Stack Web Application', budget: '', details: '' });
       } else {
         setStatus('Failed to send inquiry.');
       }
     } catch (error) {
-      setStatus('An error occurred. Is your backend server running?');
+      setStatus('An error occurred. Please try again later.');
     }
   };
 
@@ -430,13 +444,13 @@ const HireMe = ({ activeTheme }) => {
       <div className="max-w-4xl mx-auto w-full">
         <motion.h2 variants={fadeInUp} style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Project Inquiry</motion.h2>
         <motion.h3 variants={fadeInUp} className="text-3xl md:text-5xl font-bold mb-6">START A PROJECT</motion.h3>
-        <motion.p variants={fadeInUp} className="text-zinc-400 mb-12 text-lg">Please fill out the form below to help me understand your project requirements, scope, and timeline. I review all inquiries carefully and respond promptly.</motion.p>
+        <motion.p variants={fadeInUp} className="text-zinc-400 mb-12 text-lg">Please fill out the form below to help me understand your project requirements, scope, and timeline.</motion.p>
         
         <motion.form variants={staggerContainer} onSubmit={handleSubmit} className="flex flex-col gap-8 bg-black p-8 md:p-12 rounded-3xl border border-zinc-800 shadow-2xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <motion.div variants={fadeInUp}>
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Full Name *</label>
-              <input type="text" required value={inquiry.name} onChange={(e) => setInquiry({...inquiry, name: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
+              <input type="text" required value={inquiry.firstName} onChange={(e) => setInquiry({...inquiry, firstName: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
             </motion.div>
             <motion.div variants={fadeInUp}>
               <label className="block text-sm font-semibold mb-2 text-zinc-300">Company / Organization</label>
@@ -493,7 +507,6 @@ const HireMe = ({ activeTheme }) => {
   );
 };
 
-// --- MAIN APP COMPONENT ---
 const Footer = () => (
   <footer className="bg-black py-8 text-center text-zinc-500 border-t border-zinc-900">
     <p className="text-sm">
@@ -501,6 +514,7 @@ const Footer = () => (
     </p>
   </footer>
 );
+
 // --- MAIN APP COMPONENT ---
 export default function App() {
   const [activeTheme, setActiveTheme] = useState(() => {
@@ -538,7 +552,6 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      {/* The Footer is now fixed to the bottom of the column */}
       <Footer />
     </div>
   );
