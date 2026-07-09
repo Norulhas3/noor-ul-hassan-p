@@ -15,7 +15,7 @@ const portfolioData = {
       degree: "B.S. in Computer Science & Software Engineering",
       institution: "University of Central Punjab",
       year: "2024 - Present",
-      description: "Focused on object-oriented programming, data structures, algorithmic logic, and relational database systems.",
+      description: "Core focus on advanced computational mathematics, linear algebra, multivariate optimization, and statistical analysis. Extensive coursework in object-oriented programming, data structures, and algorithmic logic using C++.",
       image: null
     },
     {
@@ -34,35 +34,51 @@ const portfolioData = {
     }
   ],
   skills: {
-    languages: ["Java", "JavaScript", "C++", "HTML/CSS"],
-    backend: ["Node.js", "Express", "Spring Boot", "REST APIs"],
+    languages: ["C++", "JavaScript", "Java", "HTML/CSS", "SQL"],
+    backend: ["Node.js", "Express", "REST APIs", "Relational Database Schemas"],
     databases: ["MongoDB", "MySQL", "PostgreSQL", "Firebase"],
     tools: ["Git & GitHub", "VS Code", "Docker", "Postman"]
   },
   projects: [
     {
       id: 1,
-      name: "Portfolio",
-      description: "A personal portfolio website showcasing my projects and skills.",
+      name: "Portfolio Architecture",
+      description: "A personal portfolio website showcasing my projects and skills, featuring 3D interactions and serverless backend routing.",
       tech: ["React", "Node.js", "Framer Motion", "Tailwind CSS"],
-      link: "https://nuh-portfolio.site"
+      link: "https://noor-ul-hassan-portfolio.netlify.app/"
     },
     {
       id: 2,
-      name: "Karigar",
-      description: "A platform connecting skilled workers with customers, featuring real-time search.",
-      tech: ["Next.js", "Firebase", "Tailwind"],
+      name: "Charity Event Management System",
+      description: "Designed a comprehensive database schema and implementation strategy with strict data constraints, structural table components, and complex stored procedures.",
+      tech: ["SQL", "RDBMS", "Database Architecture"],
       link: "#"
     },
     {
       id: 3,
-      name: "AI Sentiment Analysis",
-      description: "A full-stack web application that analyzes customer feedback using AI.",
-      tech: ["Python", "Flask", "React"],
+      name: "Karigar",
+      description: "A platform connecting skilled workers with customers, featuring real-time search and dynamic routing.",
+      tech: ["Next.js", "Firebase", "Tailwind"],
       link: "#"
     }
+  ],
+  faqs: [
+    { q: "What is your primary tech stack?", a: "I specialize in the MERN stack (MongoDB, Express, React, Node.js) for full-stack web development, and C++ for complex algorithmic logic." },
+    { q: "Do you take on freelance projects?", a: "Yes, I am currently available for select freelance opportunities involving frontend architecture or backend API development." },
+    { q: "How do you handle database design?", a: "I focus heavily on relational schema design, constraint configurations, and writing efficient SQL scripts to ensure data integrity before writing the application code." }
   ]
 };
+
+const scrollReveal3D = {
+  hidden: { opacity: 0, rotateX: 45, y: 100, z: -100, scale: 0.8 },
+  show: { opacity: 1, rotateX: 0, y: 0, z: 0, scale: 1, transition: { duration: 0.8, type: "spring", bounce: 0.3 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.15 } }
+};
+
 
 // --- ADVANCED ANIMATION VARIANTS ---
 const pageVariants = {
@@ -71,10 +87,6 @@ const pageVariants = {
   exit: { opacity: 0, scale: 1.02, filter: "blur(5px)", transition: { duration: 0.3, ease: "easeIn" } }
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.15 } }
-};
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -87,6 +99,11 @@ const floatingAnim = {
 };
 
 // --- COMPONENTS ---
+// --- 3D ANIMATION VARIANTS ---
+const card3DVariant = {
+  hidden: { opacity: 0, rotateX: 30, y: 40 },
+  show: { opacity: 1, rotateX: 0, y: 0, transition: { duration: 0.7, type: "spring", bounce: 0.4 } }
+};
 
 const Navbar = ({ activeTheme, setActiveTheme, activePage, setActivePage }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -223,70 +240,112 @@ const Education = ({ activeTheme }) => (
 const Hero = ({ activeTheme, setActivePage }) => (
   <motion.section 
     variants={pageVariants} initial="initial" animate="animate" exit="exit"
-    className="min-h-screen flex items-center pt-24 pb-12 px-6 md:px-20 transition-colors duration-700" style={{ backgroundColor: activeTheme }}
+    className="min-h-screen pt-32 pb-24 px-6 md:px-20 transition-colors duration-700 relative overflow-hidden" 
+    style={{ backgroundColor: activeTheme }}
   >
-    <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between w-full gap-12">
-      <motion.div variants={staggerContainer} className="w-full md:w-1/2 text-white z-10 text-center md:text-left">
-        <motion.h1 variants={fadeInUp} className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-4 tracking-tight leading-tight">
+    <div className="max-w-6xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between w-full gap-12 z-10 pb-32">
+      <motion.div variants={staggerContainer} className="w-full md:w-1/2 text-white text-center md:text-left">
+        <motion.h1 variants={scrollReveal3D} className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-4 tracking-tight leading-tight">
           Hi, I'm <br className="hidden md:block"/>{portfolioData.name}.
         </motion.h1>
-        <motion.p variants={fadeInUp} className="text-lg sm:text-xl mb-8 font-light max-w-md mx-auto md:mx-0 opacity-90">
+        <motion.p variants={scrollReveal3D} className="text-lg sm:text-xl mb-8 font-light max-w-md mx-auto md:mx-0 opacity-90">
           {portfolioData.bio}
         </motion.p>
-        <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
-          <motion.button onClick={() => setActivePage('projects')} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-black text-white px-8 py-4 rounded-full font-bold shadow-lg transition-transform w-full sm:w-auto">
+        <motion.div variants={scrollReveal3D} className="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+          <motion.button onClick={() => setActivePage('projects')} whileHover={{ scale: 1.05, z: 20 }} whileTap={{ scale: 0.95, z: -10 }} className="bg-black text-white px-8 py-4 rounded-full font-bold shadow-lg transition-transform w-full sm:w-auto">
             View My Work
           </motion.button>
-          <motion.button onClick={() => setActivePage('hireme')} whileHover={{ scale: 1.05, backgroundColor: "#000", color: "#fff", borderColor: "#000" }} whileTap={{ scale: 0.95 }} className="border-2 border-white text-white px-8 py-4 rounded-full font-bold transition-all w-full sm:w-auto">
+          <motion.button onClick={() => setActivePage('hireme')} whileHover={{ scale: 1.05, backgroundColor: "#000", color: "#fff", borderColor: "#000", z: 20 }} whileTap={{ scale: 0.95, z: -10 }} className="border-2 border-white text-white px-8 py-4 rounded-full font-bold transition-all w-full sm:w-auto">
             Hire Me
           </motion.button>
         </motion.div>
       </motion.div>
-      <motion.div variants={fadeInUp} className="w-full md:w-1/2 flex justify-center md:justify-end">
+      <motion.div variants={scrollReveal3D} style={{ perspective: 1000 }} className="w-full md:w-1/2 flex justify-center md:justify-end">
         <motion.div 
           animate={floatingAnim}
-          whileHover={{ scale: 1.05, rotate: 5, transition: { duration: 0.2 } }} 
-          className="w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-black/20 rounded-full border-4 border-black flex items-center justify-center shadow-2xl overflow-hidden backdrop-blur-sm cursor-crosshair"
+          whileHover={{ scale: 1.05, rotateX: 15, rotateY: -15, z: 50, transition: { duration: 0.3 } }} 
+          whileTap={{ scale: 0.9, rotateX: -10, rotateY: 10, z: -30 }}
+          className="w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-black/20 rounded-full border-4 border-black flex items-center justify-center shadow-2xl overflow-hidden backdrop-blur-sm cursor-crosshair transform-gpu"
         >
-          <img src={myPhoto} alt="Noor ul Hassan" className="w-full h-full object-cover" />
+          <img src={myPhoto} alt={portfolioData.name} className="w-full h-full object-cover" />
         </motion.div>
       </motion.div>
     </div>
+
+    {/* Scroll Indicator */}
+    <motion.div 
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}
+      className="w-full flex flex-col items-center gap-2 text-white/80 pb-32"
+    >
+      <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Scroll to Discover</span>
+      <div className="w-6 h-10 border-2 border-white/80 rounded-full flex justify-center p-1">
+        <motion.div animate={{ y: [0, 16, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }} className="w-1.5 h-2 bg-white rounded-full" />
+      </div>
+    </motion.div>
+
+    {/* NEW SCROLL SECTION: About My Approach */}
+    <motion.div 
+      initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.3 }}
+      variants={staggerContainer} style={{ perspective: 1200 }}
+      className="max-w-4xl mx-auto text-white text-center pb-20"
+    >
+      <motion.h2 variants={scrollReveal3D} className="text-3xl md:text-5xl font-bold mb-8">My Approach</motion.h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <motion.div variants={scrollReveal3D} whileHover={{ z: 30, rotateX: 5, rotateY: -5 }} whileTap={{ scale: 0.95 }} className="bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-md transform-gpu">
+          <h3 className="text-xl font-bold mb-4" style={{ color: activeTheme }}>Frontend Excellence</h3>
+          <p className="text-white/70">Focusing on fluid animations, responsive layouts, and modern architecture using React and Tailwind CSS to create memorable user experiences.</p>
+        </motion.div>
+        <motion.div variants={scrollReveal3D} whileHover={{ z: 30, rotateX: 5, rotateY: 5 }} whileTap={{ scale: 0.95 }} className="bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-md transform-gpu">
+          <h3 className="text-xl font-bold mb-4" style={{ color: activeTheme }}>Backend Logic</h3>
+          <p className="text-white/70">Building secure, scalable systems with Node.js, Express, and complex relational databases. I prioritize strong algorithmic logic and data integrity.</p>
+        </motion.div>
+      </div>
+    </motion.div>
   </motion.section>
 );
 
 const Skills = ({ activeTheme }) => (
   <motion.section 
     variants={pageVariants} initial="initial" animate="animate" exit="exit"
-    className="bg-zinc-950 min-h-screen py-32 px-6 md:px-20 text-white flex items-start"
+    className="bg-zinc-950 min-h-screen py-32 px-6 md:px-20 text-white flex flex-col items-center"
   >
-    <div className="max-w-6xl mx-auto w-full">
-      <motion.h2 variants={fadeInUp} style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Technical Rigor</motion.h2>
-      <motion.h3 variants={fadeInUp} className="text-3xl md:text-5xl font-bold mb-12">MY SKILLSET</motion.h3>
-      <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+    <div className="max-w-6xl mx-auto w-full mb-32">
+      <motion.h2 variants={scrollReveal3D} style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Technical Rigor</motion.h2>
+      <motion.h3 variants={scrollReveal3D} className="text-3xl md:text-5xl font-bold mb-12">MY SKILLSET</motion.h3>
+      
+      <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.1 }} variants={staggerContainer} style={{ perspective: 1200 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
         {Object.entries(portfolioData.skills).map(([category, skillsList], index) => (
           <motion.div 
-            key={index} variants={fadeInUp} 
-            whileHover={{ y: -8, scale: 1.02, borderColor: activeTheme, boxShadow: `0 15px 35px -10px ${activeTheme}60` }} 
-            className="border border-zinc-800 p-6 rounded-2xl transition-all duration-300 bg-black shadow-lg cursor-default"
+            key={index} variants={scrollReveal3D} 
+            whileHover={{ scale: 1.05, rotateX: 10, rotateY: -10, z: 40, borderColor: activeTheme, boxShadow: `0 20px 40px -10px ${activeTheme}60` }} 
+            whileTap={{ scale: 0.95, z: -20, rotateX: 0, rotateY: 0 }} 
+            className="border border-zinc-800 p-6 rounded-2xl transition-colors duration-300 bg-black shadow-lg cursor-pointer transform-gpu"
           >
             <h4 style={{ color: activeTheme }} className="text-xl font-semibold mb-6 capitalize">{category}</h4>
             <div className="flex flex-wrap gap-2">
               {skillsList.map((skill, idx) => (
-                <motion.span 
-                  key={idx} 
-                  whileHover={{ scale: 1.1, backgroundColor: activeTheme, color: "#fff" }}
-                  whileTap={{ scale: 0.9 }}
-                  className="bg-zinc-900 text-sm px-3 py-1.5 rounded-md border border-zinc-800 transition-colors duration-200" 
-                >
-                  {skill}
-                </motion.span>
+                <span key={idx} className="bg-zinc-900 text-sm px-3 py-1.5 rounded-md border border-zinc-800">{skill}</span>
               ))}
             </div>
           </motion.div>
         ))}
       </motion.div>
     </div>
+
+    {/* NEW SCROLL SECTION: Deep Dive */}
+    <motion.div 
+      initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.3 }}
+      variants={staggerContainer} style={{ perspective: 1000 }}
+      className="max-w-4xl mx-auto w-full border-t border-zinc-800 pt-32"
+    >
+      <motion.h3 variants={scrollReveal3D} className="text-2xl md:text-4xl font-bold mb-8 text-center">Development Focus</motion.h3>
+      <motion.div variants={scrollReveal3D} whileHover={{ rotateX: 2, scale: 1.02 }} whileTap={{ scale: 0.98 }} className="bg-black p-8 md:p-12 rounded-3xl border border-zinc-800 shadow-2xl transform-gpu">
+        <h4 style={{ color: activeTheme }} className="text-xl font-bold mb-4">The MERN Stack & Beyond</h4>
+        <p className="text-zinc-400 mb-6 leading-relaxed">
+          My primary development architecture revolves around MongoDB, Express, React, and Node.js. This allows me to build seamless, single-page applications with robust backend routing. Furthermore, my foundation in C++ and advanced object-oriented programming ensures that my code is not just functional, but highly optimized for complex logic and data structures.
+        </p>
+      </motion.div>
+    </motion.div>
   </motion.section>
 );
 
@@ -297,13 +356,15 @@ const Projects = ({ activeTheme }) => (
   >
     <div className="max-w-6xl mx-auto w-full">
       <motion.h2 variants={fadeInUp} className="text-3xl md:text-5xl font-bold mb-12">Work that speaks<br className="hidden sm:block"/>for itself.</motion.h2>
-      <motion.div variants={staggerContainer} className="flex flex-col gap-8 md:gap-10">
+      
+      <motion.div variants={staggerContainer} style={{ perspective: 1200 }} className="flex flex-col gap-8 md:gap-10">
         {portfolioData.projects.map((project) => (
           <motion.div 
-            variants={fadeInUp} 
-            whileHover={{ scale: 1.015, backgroundColor: "#111" }} 
+            variants={card3DVariant} 
+            whileHover={{ scale: 1.02, rotateX: 2, rotateY: 1, z: 30, backgroundColor: "#111", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.8)" }} 
+            whileTap={{ scale: 0.98, rotateX: 0, rotateY: 0 }} // Mobile feedback
             key={project.id} 
-            className="bg-zinc-950 border border-zinc-800 p-6 md:p-8 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center shadow-xl transition-colors"
+            className="bg-zinc-950 border border-zinc-800 p-6 md:p-8 rounded-3xl flex flex-col md:flex-row justify-between items-start md:items-center shadow-xl transition-colors transform-gpu"
           >
             <div className="w-full md:w-3/4">
               <div style={{ color: activeTheme }} className="font-mono text-sm mb-2 font-bold">0{project.id}</div>
@@ -317,7 +378,7 @@ const Projects = ({ activeTheme }) => (
             </div>
             <motion.a 
               whileHover={{ scale: 1.1, backgroundColor: activeTheme, borderColor: activeTheme, color: "#fff", boxShadow: `0 0 20px ${activeTheme}40` }} 
-              whileTap={{ scale: 0.95 }} 
+              whileTap={{ scale: 0.9 }} 
               href={project.link} 
               className="mt-8 md:mt-0 w-full md:w-auto text-center border-2 border-zinc-700 px-6 py-3 rounded-full font-bold transition-all duration-300"
             >
@@ -408,32 +469,15 @@ const HireMe = ({ activeTheme }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('Submitting inquiry...');
-
-    // Format the payload to match what the API expects
-    const payload = {
-      firstName: inquiry.firstName,
-      lastName: inquiry.company ? `(${inquiry.company})` : '',
-      email: inquiry.email,
-      message: `SERVICE: ${inquiry.service}\nBUDGET: ${inquiry.budget}\n\nPROJECT DETAILS:\n${inquiry.details}`
-    };
-
+    const payload = { firstName: inquiry.firstName, lastName: inquiry.company ? `(${inquiry.company})` : '', email: inquiry.email, message: `SERVICE: ${inquiry.service}\nBUDGET: ${inquiry.budget}\n\nDETAILS:\n${inquiry.details}` };
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      
+      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const result = await response.json();
       if (result.success) {
         setStatus('Inquiry received! I will get back to you within 24 hours.');
         setInquiry({ firstName: '', company: '', email: '', service: 'Full Stack Web Application', budget: '', details: '' });
-      } else {
-        setStatus('Failed to send inquiry.');
-      }
-    } catch (error) {
-      setStatus('An error occurred. Please try again later.');
-    }
+      } else setStatus('Failed to send inquiry.');
+    } catch (error) { setStatus('An error occurred. Please try again later.'); }
   };
 
   return (
@@ -441,68 +485,58 @@ const HireMe = ({ activeTheme }) => {
       variants={pageVariants} initial="initial" animate="animate" exit="exit"
       className="bg-zinc-950 py-32 px-6 md:px-20 text-white min-h-screen border-t border-zinc-900"
     >
-      <div className="max-w-4xl mx-auto w-full">
-        <motion.h2 variants={fadeInUp} style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Project Inquiry</motion.h2>
-        <motion.h3 variants={fadeInUp} className="text-3xl md:text-5xl font-bold mb-6">START A PROJECT</motion.h3>
-        <motion.p variants={fadeInUp} className="text-zinc-400 mb-12 text-lg">Please fill out the form below to help me understand your project requirements, scope, and timeline.</motion.p>
+      <div className="max-w-4xl mx-auto w-full mb-32">
+        <motion.h2 variants={scrollReveal3D} style={{ color: activeTheme }} className="text-sm font-bold tracking-widest uppercase mb-2">Project Inquiry</motion.h2>
+        <motion.h3 variants={scrollReveal3D} className="text-3xl md:text-5xl font-bold mb-6">START A PROJECT</motion.h3>
+        <motion.p variants={scrollReveal3D} className="text-zinc-400 mb-12 text-lg">Please fill out the form below to help me understand your project requirements.</motion.p>
         
-        <motion.form variants={staggerContainer} onSubmit={handleSubmit} className="flex flex-col gap-8 bg-black p-8 md:p-12 rounded-3xl border border-zinc-800 shadow-2xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div variants={fadeInUp}>
-              <label className="block text-sm font-semibold mb-2 text-zinc-300">Full Name *</label>
-              <input type="text" required value={inquiry.firstName} onChange={(e) => setInquiry({...inquiry, firstName: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
-            </motion.div>
-            <motion.div variants={fadeInUp}>
-              <label className="block text-sm font-semibold mb-2 text-zinc-300">Company / Organization</label>
-              <input type="text" value={inquiry.company} onChange={(e) => setInquiry({...inquiry, company: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
-            </motion.div>
-            <motion.div variants={fadeInUp} className="md:col-span-2">
-              <label className="block text-sm font-semibold mb-2 text-zinc-300">Email Address *</label>
-              <input type="email" required value={inquiry.email} onChange={(e) => setInquiry({...inquiry, email: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" />
-            </motion.div>
-          </div>
-
-          <motion.div variants={fadeInUp} className="w-full h-px bg-zinc-800 my-2" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <motion.div variants={fadeInUp}>
-              <label className="block text-sm font-semibold mb-2 text-zinc-300">Primary Service Needed</label>
-              <select value={inquiry.service} onChange={(e) => setInquiry({...inquiry, service: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
-                <option>Full Stack Web Application</option>
-                <option>Frontend Architecture (React)</option>
-                <option>Backend API Development (Node/Express)</option>
-                <option>Database Design & Optimization</option>
-                <option>General Technical Consultation</option>
-              </select>
-            </motion.div>
-            <motion.div variants={fadeInUp}>
-              <label className="block text-sm font-semibold mb-2 text-zinc-300">Estimated Budget (USD)</label>
-              <select value={inquiry.budget} onChange={(e) => setInquiry({...inquiry, budget: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
-                <option value="" disabled>Select a range</option>
-                <option>Less than $1,000</option>
-                <option>$1,000 - $3,000</option>
-                <option>$3,000 - $10,000</option>
-                <option>$10,000+</option>
-              </select>
-            </motion.div>
-            <motion.div variants={fadeInUp} className="md:col-span-2">
-              <label className="block text-sm font-semibold mb-2 text-zinc-300">Project Overview & Goals *</label>
-              <textarea required rows="5" value={inquiry.details} onChange={(e) => setInquiry({...inquiry, details: e.target.value})} placeholder="Describe the problem you are trying to solve..." className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white resize-none transition-colors"></textarea>
-            </motion.div>
-          </div>
-          
-          <motion.div variants={fadeInUp} className="flex flex-col items-end">
-            <motion.button 
-              whileHover={{ scale: 1.05, filter: "brightness(1.2)", boxShadow: `0 10px 25px -5px ${activeTheme}` }} whileTap={{ scale: 0.95 }}
-              type="submit" style={{ backgroundColor: activeTheme }}
-              className="text-white py-4 px-10 rounded-xl font-bold w-full md:w-auto mt-4 transition-all"
-            >
-              Submit Inquiry
-            </motion.button>
-            {status && <motion.p initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} style={{ color: activeTheme }} className="text-sm font-bold mt-3 text-right">{status}</motion.p>}
-          </motion.div>
-        </motion.form>
+        <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.1 }} variants={staggerContainer} style={{ perspective: 1500 }}>
+          <motion.form variants={scrollReveal3D} whileHover={{ z: 20, rotateX: 1 }} whileTap={{ scale: 0.98, z: -10 }} onSubmit={handleSubmit} className="flex flex-col gap-8 bg-black p-8 md:p-12 rounded-3xl border border-zinc-800 shadow-2xl transform-gpu transition-all">
+            {/* Form Inputs (Same as before) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div><label className="block text-sm font-semibold mb-2 text-zinc-300">Full Name *</label><input type="text" required value={inquiry.firstName} onChange={(e) => setInquiry({...inquiry, firstName: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" /></div>
+              <div><label className="block text-sm font-semibold mb-2 text-zinc-300">Company</label><input type="text" value={inquiry.company} onChange={(e) => setInquiry({...inquiry, company: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" /></div>
+              <div className="md:col-span-2"><label className="block text-sm font-semibold mb-2 text-zinc-300">Email Address *</label><input type="email" required value={inquiry.email} onChange={(e) => setInquiry({...inquiry, email: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white transition-colors" /></div>
+            </div>
+            <div className="w-full h-px bg-zinc-800 my-2" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-zinc-300">Service Needed</label>
+                <select value={inquiry.service} onChange={(e) => setInquiry({...inquiry, service: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
+                  <option>Full Stack Web Application</option><option>Frontend Architecture</option><option>Backend API Development</option><option>Database Design & Optimization</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-zinc-300">Budget</label>
+                <select value={inquiry.budget} onChange={(e) => setInquiry({...inquiry, budget: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white text-white appearance-none cursor-pointer">
+                  <option value="" disabled>Select a range</option><option>Less than $1,000</option><option>$1,000 - $3,000</option><option>$3,000 - $10,000</option>
+                </select>
+              </div>
+              <div className="md:col-span-2"><label className="block text-sm font-semibold mb-2 text-zinc-300">Project Overview *</label><textarea required rows="5" value={inquiry.details} onChange={(e) => setInquiry({...inquiry, details: e.target.value})} className="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-lg focus:outline-none focus:border-white resize-none transition-colors"></textarea></div>
+            </div>
+            <button type="submit" style={{ backgroundColor: activeTheme }} className="text-white py-4 px-10 rounded-xl font-bold w-full md:w-auto mt-4 transition-all">Submit Inquiry</button>
+            {status && <p style={{ color: activeTheme }} className="text-sm font-bold mt-3 text-right">{status}</p>}
+          </motion.form>
+        </motion.div>
       </div>
+
+      {/* NEW SCROLL SECTION: FAQs */}
+      <motion.div initial="hidden" whileInView="show" viewport={{ once: false, amount: 0.2 }} variants={staggerContainer} style={{ perspective: 1000 }} className="max-w-4xl mx-auto w-full pt-20 border-t border-zinc-800">
+        <motion.h3 variants={scrollReveal3D} className="text-3xl font-bold mb-10 text-center">Frequently Asked Questions</motion.h3>
+        <div className="flex flex-col gap-6">
+          {portfolioData.faqs.map((faq, index) => (
+            <motion.div 
+              key={index} variants={scrollReveal3D} 
+              whileHover={{ scale: 1.02, z: 20, borderColor: activeTheme }} 
+              whileTap={{ scale: 0.98, z: -10 }}
+              className="bg-black border border-zinc-800 p-6 rounded-2xl transform-gpu cursor-pointer"
+            >
+              <h4 className="text-lg font-bold mb-2 text-white">{faq.q}</h4>
+              <p className="text-zinc-400 text-sm leading-relaxed">{faq.a}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </motion.section>
   );
 };
