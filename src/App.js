@@ -3,6 +3,52 @@ import myPhoto from './assets/n.jpg';
 import pnyFrontend from './assets/n.jpg'; // Adjust filename as needed
 import pnyBackend from './assets/n.jpg';   // Adjust filename as needed
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+
+// --- SITE / SEO CONFIGURATION ---
+const SITE_URL = 'https://nuh-portfolio.site';
+
+const ROUTES = {
+  home:      { path: '/',          title: 'Noor ul Hassan | Full Stack Developer Portfolio', description: 'Noor ul Hassan is a Full Stack Developer from Lahore, Pakistan, building fast, scalable web apps with React, Node.js and modern web technologies. View projects, skills and contact details.' },
+  skills:    { path: '/skills',    title: 'Skills | Noor ul Hassan, Full Stack Developer', description: 'Technical skills of Noor ul Hassan: C++, JavaScript, React, Node.js, Express, MongoDB, MySQL, PostgreSQL, Firebase, Docker and more.' },
+  projects:  { path: '/projects',  title: 'Projects | Noor ul Hassan, Full Stack Developer', description: 'Selected projects by Noor ul Hassan, including a portfolio architecture, a charity event management database system and the Karigar workers platform.' },
+  education: { path: '/education', title: 'Education & Certifications | Noor ul Hassan', description: 'Noor ul Hassan studies Computer Science & Software Engineering at the University of Central Punjab and holds frontend and backend development certifications from PNY Trainings.' },
+  contact:   { path: '/contact',   title: 'Contact | Noor ul Hassan, Full Stack Developer', description: 'Get in touch with Noor ul Hassan for web development work, collaboration or questions.' },
+  hireme:    { path: '/hire-me',   title: 'Hire Noor ul Hassan | Freelance Full Stack Developer', description: 'Start a project with Noor ul Hassan: full stack web applications, frontend architecture, backend APIs and database design.' }
+};
+
+const pageToPath = (page) => (ROUTES[page] ? ROUTES[page].path : '/');
+const pathToPage = (pathname) => {
+  const clean = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+  const found = Object.entries(ROUTES).find(([, r]) => r.path === clean);
+  return found ? found[0] : null;
+};
+
+// Updates <title>, description, canonical and social tags on every page change.
+const setMeta = (selector, attr, value, create) => {
+  let el = document.head.querySelector(selector);
+  if (!el && create) { el = document.createElement(create.tag); Object.entries(create.attrs).forEach(([k, v]) => el.setAttribute(k, v)); document.head.appendChild(el); }
+  if (el) el.setAttribute(attr, value);
+};
+
+const Seo = ({ page }) => {
+  useEffect(() => {
+    const route = ROUTES[page];
+    const title = route ? route.title : 'Page not found | Noor ul Hassan';
+    const description = route ? route.description : ROUTES.home.description;
+    const url = SITE_URL + (route ? (route.path === '/' ? '/' : route.path) : '/');
+    document.title = title;
+    setMeta('meta[name="description"]', 'content', description, { tag: 'meta', attrs: { name: 'description' } });
+    setMeta('link[rel="canonical"]', 'href', url, { tag: 'link', attrs: { rel: 'canonical' } });
+    setMeta('meta[property="og:title"]', 'content', title, { tag: 'meta', attrs: { property: 'og:title' } });
+    setMeta('meta[property="og:description"]', 'content', description, { tag: 'meta', attrs: { property: 'og:description' } });
+    setMeta('meta[property="og:url"]', 'content', url, { tag: 'meta', attrs: { property: 'og:url' } });
+    setMeta('meta[name="twitter:title"]', 'content', title, { tag: 'meta', attrs: { name: 'twitter:title' } });
+    setMeta('meta[name="twitter:description"]', 'content', description, { tag: 'meta', attrs: { name: 'twitter:description' } });
+    setMeta('meta[name="robots"]', 'content', route ? 'index, follow' : 'noindex, follow', { tag: 'meta', attrs: { name: 'robots' } });
+  }, [page]);
+  return null;
+};
 
 // --- DATA CONFIGURATION ---
 const portfolioData = {
@@ -105,6 +151,8 @@ const card3DVariant = {
   show: { opacity: 1, rotateX: 0, y: 0, transition: { duration: 0.7, type: "spring", bounce: 0.4 } }
 };
 
+const MotionLink = motion(Link);
+
 const Navbar = ({ activeTheme, setActiveTheme, activePage, setActivePage }) => {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -119,6 +167,7 @@ const Navbar = ({ activeTheme, setActiveTheme, activePage, setActivePage }) => {
     setActivePage(page.toLowerCase());
     setIsOpen(false);
   };
+  const navPath = (item) => pageToPath(item.toLowerCase());
 
   return (
     <motion.nav 
@@ -141,23 +190,25 @@ const Navbar = ({ activeTheme, setActiveTheme, activePage, setActivePage }) => {
       {/* DESKTOP MENU (Hidden on Mobile) */}
       <div className="hidden md:flex items-center gap-6 text-sm font-medium">
         {navItems.map((item) => (
-          <motion.button 
+          <MotionLink 
             key={item} 
+            to={navPath(item)}
             whileHover={{ y: -2 }}
-            onClick={() => handleNavClick(item)}
+            onClick={() => setIsOpen(false)}
+            aria-current={activePage === item.toLowerCase() ? 'page' : undefined}
             className={`transition-all duration-300 py-2 border-b-2 ${activePage === item.toLowerCase() ? 'border-white' : 'border-transparent hover:border-white/50'}`}
           >
             {item}
-          </motion.button>
+          </MotionLink>
         ))}
-        <motion.button 
+        <MotionLink 
+          to={pageToPath('hireme')}
           whileHover={{ scale: 1.05, backgroundColor: "#000", color: "#fff", borderColor: "#000", boxShadow: "0px 5px 15px rgba(0,0,0,0.3)" }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => handleNavClick('HireMe')}
           className="border-2 border-white px-5 py-2 rounded-full text-sm font-bold transition-colors cursor-pointer"
         >
           Hire Me
-        </motion.button>
+        </MotionLink>
         
         {/* Desktop Theme Picker */}
         <div className="flex items-center gap-2 border-l-2 border-white/30 pl-6 ml-2">
@@ -194,15 +245,15 @@ const Navbar = ({ activeTheme, setActiveTheme, activePage, setActivePage }) => {
             className="absolute top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center gap-6 md:hidden z-40 overflow-y-auto py-10"
           >
             {navItems.map((item, i) => (
-              <motion.button 
+              <MotionLink 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0, transition: { delay: i * 0.1 + 0.1 } }}
-                key={item} onClick={() => handleNavClick(item)}
+                key={item} to={navPath(item)} onClick={() => setIsOpen(false)}
                 className="text-3xl font-bold hover:text-gray-400 transition-colors"
                 style={{ color: activePage === item.toLowerCase() ? '#fff' : activeTheme }}
               >
                 {item}
-              </motion.button>
+              </MotionLink>
             ))}
 
             {/* Mobile Theme Picker - Safely inside the scrollable menu */}
@@ -223,14 +274,15 @@ const Navbar = ({ activeTheme, setActiveTheme, activePage, setActivePage }) => {
               </motion.div>
             </motion.div>
 
-            <motion.button 
+            <MotionLink 
+              to={pageToPath('hireme')}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0, transition: { delay: 0.7 } }}
-              onClick={() => handleNavClick('HireMe')} 
+              onClick={() => setIsOpen(false)} 
               className="mt-4 border-2 border-white px-10 py-4 rounded-full text-xl font-bold"
             >
               Hire Me
-            </motion.button>
+            </MotionLink>
           </motion.div>
         )}
       </AnimatePresence>
@@ -305,7 +357,7 @@ const Education = ({ activeTheme, setSelectedImage }) => (
       {/* LEFT SIDE: TEXT */}
       <motion.div variants={staggerContainer} className="w-[55%] md:w-1/2 text-white text-left">
         <motion.h1 variants={scrollReveal3D} className="text-2xl sm:text-5xl md:text-7xl font-extrabold mb-2 md:mb-4 tracking-tight leading-tight">
-          Hi, I'm <br />{portfolioData.name}.
+          Hi, I'm <br />{portfolioData.name}.<span className="sr-only"> {portfolioData.title}</span>
         </motion.h1>
         <motion.p variants={scrollReveal3D} className="text-[11px] sm:text-lg md:text-xl mb-4 md:mb-8 font-light opacity-90 leading-relaxed md:max-w-md pr-2">
           {portfolioData.bio}
@@ -339,7 +391,7 @@ const Education = ({ activeTheme, setSelectedImage }) => (
           onClick={() => setSelectedImage(myPhoto)}
           className="w-28 h-28 sm:w-48 sm:h-48 md:w-96 md:h-96 bg-black/20 rounded-full border-2 md:border-4 border-black flex items-center justify-center shadow-2xl overflow-hidden backdrop-blur-sm cursor-zoom-in transform-gpu transition-all shrink-0"
         >
-          <img src={myPhoto} alt={portfolioData.name} className="w-full h-full object-cover" />
+          <img src={myPhoto} alt={`${portfolioData.name}, ${portfolioData.title}`} className="w-full h-full object-cover" />
         </motion.div>
       </motion.div>
     </div>
@@ -775,10 +827,28 @@ const HireMe = ({ activeTheme }) => {
 
 const Footer = () => (
   <footer className="bg-black py-8 text-center text-zinc-500 border-t border-zinc-900">
+    <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4 text-sm">
+      {Object.values(ROUTES).map((r) => (
+        <Link key={r.path} to={r.path} className="hover:text-white transition-colors">
+          {r.path === '/' ? 'Home' : r.path === '/hire-me' ? 'Hire Me' : r.path.slice(1).charAt(0).toUpperCase() + r.path.slice(2)}
+        </Link>
+      ))}
+    </nav>
     <p className="text-sm">
       &copy; {new Date().getFullYear()} Noor ul Hassan. All rights reserved.
     </p>
   </footer>
+);
+
+const NotFound = ({ activeTheme }) => (
+  <motion.section
+    variants={pageVariants} initial="initial" animate="animate" exit="exit"
+    className="bg-black min-h-screen py-32 px-6 text-white flex flex-col items-center justify-center text-center"
+  >
+    <h1 style={{ color: activeTheme }} className="text-7xl font-black mb-4">404</h1>
+    <p className="text-xl text-zinc-400 mb-8">This page doesn't exist.</p>
+    <Link to="/" style={{ backgroundColor: activeTheme }} className="px-8 py-4 rounded-full font-bold text-white">Back to Home</Link>
+  </motion.section>
 );
 
 // --- MAIN APP COMPONENT ---
@@ -808,42 +878,49 @@ const ImageModal = ({ selectedImage, setSelectedImage }) => (
 
 export default function App() {
   const [activeTheme, setActiveTheme] = useState(() => {
-    return localStorage.getItem('portfolio_theme') || '#6e6363';
+    try { return localStorage.getItem('portfolio_theme') || '#6e6363'; } catch (e) { return '#6e6363'; }
   });
-
   const [selectedImage, setSelectedImage] = useState(null);
-  
-  const [activePage, setActivePage] = useState(() => {
-    return localStorage.getItem('portfolio_page') || 'home';
-  });
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const page = pathToPage(location.pathname);       // null => 404
+  const activePage = page || '';
+
+  // Pages ask to navigate by name ('projects', 'hireme'...); this turns it into a real URL.
+  const setActivePage = (name) => navigate(pageToPath(name));
 
   useEffect(() => {
-    localStorage.setItem('portfolio_theme', activeTheme);
-    localStorage.setItem('portfolio_page', activePage);
-  }, [activeTheme, activePage]);
+    try { localStorage.setItem('portfolio_theme', activeTheme); } catch (e) { /* storage unavailable */ }
+  }, [activeTheme]);
+
+  // New page => start at the top
+  useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
 
   const renderPage = () => {
-    switch(activePage) {
-      case 'home': return <Hero activeTheme={activeTheme} setActivePage={setActivePage} key="home" />;
+    switch (page) {
+      case 'home': return <Hero activeTheme={activeTheme} setActivePage={setActivePage} setSelectedImage={setSelectedImage} key="home" />;
       case 'skills': return <Skills activeTheme={activeTheme} key="skills" />;
       case 'projects': return <Projects activeTheme={activeTheme} key="projects" />;
-      case 'education': return <Education activeTheme={activeTheme} key="education" />;
+      case 'education': return <Education activeTheme={activeTheme} setSelectedImage={setSelectedImage} key="education" />;
       case 'contact': return <Contact activeTheme={activeTheme} key="contact" />;
       case 'hireme': return <HireMe activeTheme={activeTheme} key="hireme" />;
-      default: return <Hero activeTheme={activeTheme} setActivePage={setActivePage} key="home" />;
+      default: return <NotFound activeTheme={activeTheme} key="404" />;
     }
   };
 
   return (
     <div className="font-sans antialiased selection:bg-white selection:text-black bg-black relative overflow-x-hidden min-h-screen flex flex-col">
+      <Seo page={page} />
       <Navbar activeTheme={activeTheme} setActiveTheme={setActiveTheme} activePage={activePage} setActivePage={setActivePage} />
-      
+
       <main className="flex-grow flex flex-col">
         <AnimatePresence mode="wait">
           {renderPage()}
         </AnimatePresence>
       </main>
 
+      <ImageModal selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
       <Footer />
     </div>
   );
